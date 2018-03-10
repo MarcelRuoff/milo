@@ -23,6 +23,7 @@ import java.util.concurrent.CompletableFuture;
 import com.google.common.collect.Lists;
 import org.eclipse.milo.examples.server.methods.SqrtMethod;
 import org.eclipse.milo.examples.server.methods.MarmottaGET;
+import org.eclipse.milo.examples.server.methods.MarmottaPost;
 import org.eclipse.milo.examples.server.types.CustomDataType;
 import org.eclipse.milo.opcua.sdk.core.AccessLevel;
 import org.eclipse.milo.opcua.sdk.core.Reference;
@@ -498,13 +499,14 @@ public class ExampleNamespace implements Namespace {
     }
 
     private void addMethodNode(UaFolderNode folderNode) {
-        UaMethodNode methodNode = UaMethodNode.builder(server.getNodeMap())
-            .setNodeId(new NodeId(namespaceIndex, "HelloWorld/sqrt(x)"))
-            .setBrowseName(new QualifiedName(namespaceIndex, "sqrt(x)"))
-            .setDisplayName(new LocalizedText(null, "sqrt(x)"))
-            .setDescription(
-                LocalizedText.english("Returns the correctly rounded positive square root of a double value."))
-            .build();
+       
+        UaMethodNode methodNodeGet = UaMethodNode.builder(server.getNodeMap())
+                .setNodeId(new NodeId(namespaceIndex, "HelloWorld/Get"))
+                .setBrowseName(new QualifiedName(namespaceIndex, "Get"))
+                .setDisplayName(new LocalizedText(null, "Get"))
+                .setDescription(
+                    LocalizedText.english("Get to Marmotta."))
+                .build();
         
         UaMethodNode methodNodePost = UaMethodNode.builder(server.getNodeMap())
                 .setNodeId(new NodeId(namespaceIndex, "HelloWorld/Post"))
@@ -517,7 +519,7 @@ public class ExampleNamespace implements Namespace {
         try {
             AnnotationBasedInvocationHandler invocationHandlerPost =
                 AnnotationBasedInvocationHandler.fromAnnotatedObject(
-                    server.getNodeMap(), new MarmottaGET());
+                    server.getNodeMap(), new MarmottaPost());
 
             methodNodePost.setProperty(UaMethodNode.InputArguments, invocationHandlerPost.getInputArguments());
             methodNodePost.setProperty(UaMethodNode.OutputArguments, invocationHandlerPost.getOutputArguments());
@@ -541,37 +543,37 @@ public class ExampleNamespace implements Namespace {
                 false
             ));
         } catch (Exception e) {
-            logger.error("Error creating Post method.", e);
+            logger.error("Error creating Get method.", e);
         }
         
         try {
-            AnnotationBasedInvocationHandler invocationHandler =
+            AnnotationBasedInvocationHandler invocationHandlerGet =
                 AnnotationBasedInvocationHandler.fromAnnotatedObject(
-                    server.getNodeMap(), new SqrtMethod());
+                    server.getNodeMap(), new MarmottaGET());
 
-            methodNode.setProperty(UaMethodNode.InputArguments, invocationHandler.getInputArguments());
-            methodNode.setProperty(UaMethodNode.OutputArguments, invocationHandler.getOutputArguments());
-            methodNode.setInvocationHandler(invocationHandler);
+            methodNodeGet.setProperty(UaMethodNode.InputArguments, invocationHandlerGet.getInputArguments());
+            methodNodeGet.setProperty(UaMethodNode.OutputArguments, invocationHandlerGet.getOutputArguments());
+            methodNodeGet.setInvocationHandler(invocationHandlerGet);
 
-            server.getNodeMap().addNode(methodNode);
+            server.getNodeMap().addNode(methodNodeGet);
 
             folderNode.addReference(new Reference(
                 folderNode.getNodeId(),
                 Identifiers.HasComponent,
-                methodNode.getNodeId().expanded(),
-                methodNode.getNodeClass(),
+                methodNodeGet.getNodeId().expanded(),
+                methodNodeGet.getNodeClass(),
                 true
             ));
 
-            methodNode.addReference(new Reference(
-                methodNode.getNodeId(),
+            methodNodeGet.addReference(new Reference(
+            		methodNodeGet.getNodeId(),
                 Identifiers.HasComponent,
                 folderNode.getNodeId().expanded(),
                 folderNode.getNodeClass(),
                 false
             ));
         } catch (Exception e) {
-            logger.error("Error creating sqrt() method.", e);
+            logger.error("Error creating Get() method.", e);
         }
     }
     

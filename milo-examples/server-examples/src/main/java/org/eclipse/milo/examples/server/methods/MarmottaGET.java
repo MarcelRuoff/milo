@@ -76,11 +76,6 @@ public class MarmottaGET {
     @UaMethod
     public void invoke(
         InvocationContext context,
-
-        @UaInputArgument(
-            name = "InputBody",
-            description = "Input Body for the Creation of a Resource")
-            String InputBody,
         
         @UaInputArgument(
        		name = "URI")
@@ -187,7 +182,6 @@ public class MarmottaGET {
 			e.printStackTrace();
 		}
 
-        System.out.println("sqrt(" + InputBody.toString() + ")");
         logger.debug("Invoking post() method of Object '{}'", context.getObjectNode().getBrowseName().getName());
         
        
