@@ -498,6 +498,10 @@ public class ExampleNamespace implements Namespace {
         dataAccessFolder.addOrganizes(node);
     }
 
+    /*
+     * Änderungen Marcel Ruoff
+     *
+     */
     private void addMethodNode(UaFolderNode folderNode) {
        
         UaMethodNode methodNodeGet = UaMethodNode.builder(server.getNodeMap())
